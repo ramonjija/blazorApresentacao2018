@@ -1,0 +1,60 @@
+@page "/todo"
+
+<div class="container">
+    <h1>Todo List (@myList.Count)</h1>
+    <ul>
+        @foreach(var item in myList) 
+        {
+            <li class="@item.DecorationStyle">@item.Description <input type="checkbox" checked="@item.Done" bind="@item.Done"/></li> 
+        }
+    </ul>
+
+    <div class="col-md-4">
+        <div class="input-group mb-2" role="group">
+            <input type="text" class="form-control" bind="@itemDescription"/>
+            <div class="input-group-append">
+                <button type="button" class="btn btn-outline-primary" onclick="@AddItem">Add Item</button>
+            </div>
+        </div>
+        <div class="btn-group">
+            <button type="button" class="btn btn-outline-warning" disabled="@disabled" onclick="@RemoveItens">Remove Item(s)</button>
+            <button type="button" class="btn btn-outline-danger" onclick="@ClearList">Clear List</button>
+        </div>
+    </div>
+</div>
+
+@functions {
+    public class Item {
+       public string Description {get; set;}
+       public bool Done {get; set;} = false;
+       public string DecorationStyle {
+           get {
+               return this.Done ? "scratchItem" : "";
+           } 
+       }
+    }
+
+    List<Item> myList = new List<Item>();
+    string itemDescription;
+    bool disabled = true;
+
+    void AddItem() {
+        if(!String.IsNullOrWhiteSpace(itemDescription)) {
+            myList.Add(new Item {Description = itemDescription});
+            itemDescription = "";
+            disabled = false;
+        }
+    }
+
+    void RemoveItens() {
+        myList.RemoveAll(item => item.Done == true);
+        if(myList.Count == 0) {
+            disabled = true;
+        }
+    }
+
+    void ClearList() {
+        myList.Clear();
+        disabled = true;
+    }
+}
